@@ -41,4 +41,9 @@ describe('email validator', () => {
     expect(await ps('@example.com')).toBe(msg)
   })
 
+  test('no TLD', async () => {
+    const msg = 'invalid email'
+    const ps = email(msg)
+    expect(await ps('samebody@example.ne.')).toBe(msg)
+  })
 })
