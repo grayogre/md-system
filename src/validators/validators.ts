@@ -1,5 +1,5 @@
 const required = (message:string) => {
-  const func = (value:any) => new Promise((resolve) => {
+  const func = (value:any) => new Promise<string>((resolve) => {
     resolve(value === '' ? message : '')
   })
 
