@@ -12,13 +12,13 @@ describe('required validator', () => {
   })
 
   test('validate success', async () => {
-    const msg = 'test success'
+    const msg = 'test failed'
     const ps = required(msg)
     expect(await ps('text')).toBe('')
   })
 
   test('validate failed', async () => {
-    const msg = 'test success'
+    const msg = 'test failed'
     const ps = required(msg)
     expect(await ps('')).toBe(msg)
   })
