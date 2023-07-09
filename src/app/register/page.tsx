@@ -1,12 +1,23 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { axiosInstance } from '../../api/axiosInstance'
 import Frame from '../../components/Frame'
+import Errors from '../../components/Errors'
 
 export default function Home() {
 
-  const [data, setData] = useState(null)
+  const defaultResult = {
+    status: 200,
+    errors: {
+      name: [],
+      email: [],
+      password: [],
+    }
+  }
+  const [result, setResult] = useState(defaultResult)
+  const router = useRouter()
 
   const onClick = () => {
     const namefld = document.getElementById('name') as HTMLInputElement
@@ -22,31 +33,39 @@ export default function Home() {
         },)
           .then((res) => {
             console.log('reg', res)
-            setData(res.data)
+            router.push('/')
           })
           .catch((err)  =>{
             console.log(err)
-            setData(err.response.data)
+            setResult(err.response.data)
           })
     }).catch((err) => {
       console.log(err)
-      setData(err.response.data)
+      setResult(err.response.data)
     })
   } 
 
   return (
     <Frame>
-      <form>
-        <label htmlFor="name">ニックネーム</label>
-        <input type="text" id="name" placeholder="ニックネーム" />
-        <label htmlFor="email">Eメール</label>
-        <input type="email" id="email" placeholder="aaa@bbb.com" />
-        <label htmlFor="password">パスワード</label>
-        <input type="password" id="password" placeholder="パスワード" />
-        <button type="button" onClick={onClick}>登録</button>
-        <hr />
-        <div>{JSON.stringify(data)}</div>
-      </form>
+      <div className="block bg-white mx-auto w-96 p-5">
+        <h2 className="mb-2">プレイヤー登録</h2>
+        <form>
+          <div className="frex frex-row">
+            <label className="block text-xs" htmlFor="name">ニックネーム</label>
+            <input className="block border border-black mb-2" type="text" id="name" placeholder="ニックネーム" />
+            <Errors className="block" messages={result.errors.name} />
+            <label className="block text-xs" htmlFor="email">Eメール</label>
+            <input className="block border border-black mb-2" type="email" id="email" placeholder="aaa@bbb.com" />
+            <Errors className="block" messages={result.errors.email} />
+            <label className="block text-xs" htmlFor="password">パスワード</label>
+            <input className="block border border-black mb-2" type="password" id="password" placeholder="パスワード" />
+            <Errors className="block" messages={result.errors.password} />
+          </div>
+          <div>
+            <button className="bg-blue-500 text-white" type="button" onClick={onClick}>登録</button>
+          </div>
+        </form>
+      </div>
     </Frame>
   )
 }
