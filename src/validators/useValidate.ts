@@ -1,18 +1,19 @@
 import {useState} from 'react'
 import {errorInfo, validateFunc, validator} from './utility'
 
-export default function useValidate() {
+export default function useValidate(paramRules:((value:any) => Promise<string>)[]) {
   const baseResult:errorInfo = { isValid:true, messages: [] }
 
-  const [result, setErrinfo] = useState(baseResult)
+  const [rules] = useState(paramRules)
+  const [result, setResult] = useState(baseResult)
 
-  const validate = async (value:any, methods:((value:any) => Promise<string>)[]) => {
+  const validate = async (value:any) => {
     const res:errorInfo = { isValid:true, messages: [] }
 
-    const messages = await Promise.all(methods.map((m) => m(value)))
+    const messages = await Promise.all(rules.map((r) => r(value)))
     res.messages = messages.filter((item) => item !== '')
     res.isValid = res.messages.length === 0
-    setErrinfo(res)
+    setResult(res)
   }
   
   return {result, validate}
