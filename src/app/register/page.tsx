@@ -51,18 +51,18 @@ export default function Home() {
         <h2 className="mb-2">プレイヤー登録</h2>
         <form>
           <div className="frex frex-row">
-            <label className="block text-xs" htmlFor="name">ニックネーム</label>
-            <input className="block border border-black mb-2" type="text" id="name" placeholder="ニックネーム" />
+            <label className="label-primary" htmlFor="name">ニックネーム</label>
+            <input className="input-primary" type="text" id="name" placeholder="ニックネーム" />
             <Errors className="block" messages={result.errors.name} />
-            <label className="block text-xs" htmlFor="email">Eメール</label>
-            <input className="block border border-black mb-2" type="email" id="email" placeholder="aaa@bbb.com" />
+            <label className="label-primary" htmlFor="email">Eメール</label>
+            <input className="input-primary" type="email" id="email" placeholder="aaa@bbb.com" />
             <Errors className="block" messages={result.errors.email} />
-            <label className="block text-xs" htmlFor="password">パスワード</label>
-            <input className="block border border-black mb-2" type="password" id="password" placeholder="パスワード" />
+            <label className="label-primary" htmlFor="password">パスワード</label>
+            <input className="input-primary" type="password" id="password" placeholder="パスワード" />
             <Errors className="block" messages={result.errors.password} />
           </div>
           <div>
-            <button className="bg-blue-500 text-white" type="button" onClick={onClick}>登録</button>
+            <button className="bg-blue-500 text-white px-5 py-1" type="button" onClick={onClick}>登録</button>
           </div>
         </form>
       </div>
