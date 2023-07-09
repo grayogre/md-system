@@ -62,7 +62,7 @@ export default function Home() {
             <Errors className="block" messages={result.errors.password} />
           </div>
           <div>
-            <button className="bg-blue-500 text-white px-5 py-1" type="button" onClick={onClick}>登録</button>
+            <button className="bg-blue-500 text-white px-5 py-1 shadow" type="button" onClick={onClick}>登録</button>
           </div>
         </form>
       </div>
