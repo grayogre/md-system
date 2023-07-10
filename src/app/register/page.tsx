@@ -5,8 +5,11 @@ import { useRouter } from 'next/navigation'
 import { axiosInstance } from '../../api/axiosInstance'
 import Frame from '../../components/Frame'
 import Errors from '../../components/Errors'
+import OpenEye from '../../components/OpenEye'
+import CloseEye from '../../components/CloseEye'
 
 export default function Home() {
+  console.log('call Home')
 
   const defaultResult = {
     status: 200,
@@ -16,7 +19,9 @@ export default function Home() {
       password: [],
     }
   }
+ 
   const [result, setResult] = useState(defaultResult)
+  const [showPass, setShowPass] = useState(false)
   const router = useRouter()
 
   const onClick = () => {
@@ -45,6 +50,10 @@ export default function Home() {
     })
   } 
 
+  const toggleShowPass = () => {
+    setShowPass((flag) => !flag)
+  }
+
   return (
     <Frame>
       <div className="block bg-white mx-auto w-96 p-5">
@@ -53,13 +62,18 @@ export default function Home() {
           <div className="frex frex-row">
             <label className="label-primary" htmlFor="name">ニックネーム</label>
             <input className="input-primary" type="text" id="name" placeholder="ニックネーム" />
-            <Errors className="block" messages={result.errors.name} />
+            <Errors className="block" messages={result.errors?.name ?? []} />
             <label className="label-primary" htmlFor="email">Eメール</label>
             <input className="input-primary" type="email" id="email" placeholder="aaa@bbb.com" />
-            <Errors className="block" messages={result.errors.email} />
+            <Errors className="block" messages={result.errors?.email ?? []} />
             <label className="label-primary" htmlFor="password">パスワード</label>
-            <input className="input-primary" type="password" id="password" placeholder="パスワード" />
-            <Errors className="block" messages={result.errors.password} />
+            <div className="flex">
+              <input className="input-primary" type={showPass ? "text" : "password"} id="password" placeholder="パスワード" />
+              <span className="mb-2" onClick={toggleShowPass}>
+                {showPass ? <OpenEye /> : <CloseEye /> }
+              </span>
+            </div>
+            <Errors className="block" messages={result.errors?.password ?? []} />
           </div>
           <div>
             <button className="bg-blue-500 text-white px-5 py-1 shadow" type="button" onClick={onClick}>登録</button>

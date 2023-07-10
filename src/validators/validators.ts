@@ -23,4 +23,13 @@ const minlen = (limit:number, message:string) => {
   return func
 }
 
-export {required, email, minlen}
+const validpass = (message:string) => {
+  const func = (value:any) => new Promise<string>((resolve) => {
+    const re = /^[\w\d]+$/
+    resolve(re.test(value) ? '' : message)
+  })
+
+  return func
+}
+
+export {required, email, minlen, validpass}
