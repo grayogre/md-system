@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpFoundation\Response;
+use App\Rules\Validpass;
 
 class RegisterRequest extends FormRequest
 {
@@ -27,7 +28,7 @@ class RegisterRequest extends FormRequest
         return [
             'name' => ['required', 'unique:users,name', ],
             'email' => ['email', 'unique:users,email', ],
-            'password' => ['required', 'min:6' ],
+            'password' => ['required', 'min:6', new Validpass ],
         ];
     }
 
