@@ -15,4 +15,12 @@ const email = (message:string) => {
   return func
 } 
 
-export {required, email}
+const minlen = (limit:number, message:string) => {
+  const func = (value:string) => new Promise<string>((resolve) => {
+    resolve(value.length >= limit ? '' : message)
+  })
+
+  return func
+}
+
+export {required, email, minlen}
