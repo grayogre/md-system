@@ -21,7 +21,7 @@ class Validpass implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (!preg_match('/^\w\d+$/', $value)) {
+        if (!preg_match('/^[\w\d]+$/', $value)) {
             $fail(':attribute は半角英数字で入力してください');
         }
     }
