@@ -2,15 +2,13 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { axiosInstance } from '../../api/axiosInstance'
+import axios from '../axios'
 import Frame from '../../components/Frame'
 import Errors from '../../components/Errors'
 import OpenEye from '../../components/OpenEye'
 import CloseEye from '../../components/CloseEye'
 
 export default function Home() {
-  console.log('call Home')
-
   const defaultResult = {
     status: 200,
     errors: {
@@ -24,30 +22,24 @@ export default function Home() {
   const [showPass, setShowPass] = useState(false)
   const router = useRouter()
 
-  const onClick = () => {
+  const onClick = async () => {
     const namefld = document.getElementById('name') as HTMLInputElement
     const emailfld = document.getElementById('email') as HTMLInputElement
     const passfld = document.getElementById('password') as HTMLInputElement
-    axiosInstance.get('/sanctum/csrf-cookie')
+    await axios.get('/sanctum/csrf-cookie')
+    axios.post('/api/register', {
+      name: namefld?.value,
+      email: emailfld?.value,
+      password: passfld?.value
+    },)
       .then((res) => {
-        console.log('csrf', res)
-        axiosInstance.post('/api/register', {
-          name: namefld?.value,
-          email: emailfld?.value,
-          password: passfld?.value
-        },)
-          .then((res) => {
-            console.log('reg', res)
-            router.push('/')
-          })
-          .catch((err)  =>{
-            console.log(err)
-            setResult(err.response.data)
-          })
-    }).catch((err) => {
-      console.log(err)
-      setResult(err.response.data)
-    })
+        console.log('reg', res)
+        router.push('/')
+      })
+      .catch((err)  =>{
+        console.log(err)
+        setResult(err.response.data)
+      })
   } 
 
   const toggleShowPass = () => {
