@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import axios from '../axios'
 import Frame from '../../components/Frame'
@@ -11,45 +11,86 @@ import { useForm } from 'react-hook-form'
 
 export default function Home() {
 
-  const namefld = useRef<HTMLInputElement>(null)
-  const emailfld = useRef<HTMLInputElement>(null)
-  const passfld = useRef<HTMLInputElement>(null)
-  const [nameErr, setNameErr] = useState<string[]>([])
-  const [emailErr, setEmailErr] = useState<string[]>([])
-  const [passErr, setPassErr] = useState<string[]>([])
+  const [nameErr, setNameErr] = useState<any>([])
+  const [emailErr, setEmailErr] = useState<any>([])
+  const [passErr, setPassErr] = useState<any>([])
   const [error, setError] = useState('')
-  const {register, handleSubmit} = useForm()
   const [showPass, setShowPass] = useState(false)
   const router = useRouter()
+  const { 
+    register,
+    handleSubmit,
+    getValues, 
+    formState: { errors }
+  } = useForm({
+    mode: 'onBlur',
+  })
 
-  const {ref:nameRef, ...nameRest} = register('name')
-  const {ref:emailRef, ...emailRest} = register('email')
-  const {ref:passRef, ...passRest} = register('password')
+  const nameRegist = register('name', {
+    required: {
+      value: true,
+      message: 'ニックネームを入力してください。'
+    }
+  })
+  const emailRegist = register('email', {
+    required: {
+      value: true,
+      message: 'メールアドレスを入力してください。'
+    },
+    pattern: {
+      value: /^[\w\d][\w\d.-]*@[\w\d.-]+\.[\w\d]+$/,
+      message: 'メールアドレスの形式が正しくありません。'
+    }
+  })
+  const passRegist = register('password', {
+    required: {
+      value: true,
+      message: 'パスワードを入力してください。'
+    },
+    pattern: {
+      value: /^[\w\d]+$/,
+      message: 'パスワードは英数字にしてください。'
+    },
+    minLength: {
+      value: 6,
+      message: 'パスワードは6文字以上にしてください。'
+    }
+  })
 
-  const onSubmit = async () => {
-    await axios.get('/sanctum/csrf-cookie')
-    axios.post('/api/register', {
-      name:namefld.current?.value,
-      email: emailfld.current?.value,
-      password: passfld.current?.value
-    },)
+  const showCriticalError = (message:string) => {
+    setError(message)
+    setNameErr([])
+    setEmailErr([])
+    setPassErr([])
+  }
+
+  const onSubmit = () => {
+    axios.get('/sanctum/csrf-cookie')
       .then((res) => {
-        console.log('reg', res)
-        router.push('/')
+        axios.post('/api/register', {
+          name: getValues('name'),
+          email: getValues('email'),
+          password: getValues('password')
+        },)
+          .then((res) => {
+            console.log('reg', res)
+            router.push('/')
+          })
+          .catch((err) => {
+            console.log(err)
+            if (err.code === 'ERR_BAD_REQUEST') {
+              setError('')
+              setNameErr(err.response.data.errors?.name)
+              setEmailErr(err.response.data.errors?.email)
+              setPassErr(err.response.data.errors?.password)
+            } else {
+              showCriticalError(err.message)
+            }
+          })
       })
-      .catch((err)  =>{
+      .catch((err) => {
         console.log(err)
-        if (err.code === 'ERR_BAD_REQUEST') {
-          setError('')
-          setNameErr(err.response.data.errors?.name)
-          setEmailErr(err.response.data.errors?.email)
-          setPassErr(err.response.data.errors?.password)
-        } else {
-          setError(err.message)
-          setNameErr([])
-          setEmailErr([])
-          setPassErr([])
-        }
+        showCriticalError(err.message)
       })
   } 
 
@@ -64,21 +105,24 @@ export default function Home() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="frex frex-row">
             <label className="label-primary" htmlFor="name">ニックネーム</label>
-            <input id="name" className="input-primary" type="text"  placeholder="ニックネーム" 
-              {...nameRest} ref={namefld}/>
+            <input id="name" className="input-primary" type="text"
+              placeholder="ニックネーム" {...nameRegist}/>
+            {errors.name && <p className="text-red-500">{errors.name.message as string}</p>}
             <Errors className="block" messages={nameErr ?? []} />
             <label className="label-primary" htmlFor="email">Eメール</label>
-            <input id="email" className="input-primary" type="email" placeholder="aaa@bbb.com"
-              {...emailRest} ref={emailfld} />
+            <input id="email" className="input-primary" type="email"
+              placeholder="aaa@bbb.com" {...emailRegist} />
+            {errors.email && <p className="text-red-500">{errors.email.message as string}</p>}
             <Errors className="block" messages={emailErr ?? []} />
             <label className="label-primary" htmlFor="password">パスワード</label>
             <div className="flex">
-              <input id="password" className="input-primary" type={showPass ? "text" : "password"} placeholder="パスワード"
-                {...passRest} ref={passfld}/>
+              <input id="password" className="input-primary" type={showPass ? "text" : "password"}
+                placeholder="パスワード" {...passRegist} />
               <span className="mb-2" onClick={toggleShowPass}>
                 {showPass ? <OpenEye /> : <CloseEye /> }
               </span>
             </div>
+            {errors.password && <p className="text-red-500">{errors.password.message as string}</p>}
             <Errors className="block" messages={passErr ?? []} />
             <Errors className="block" messages={error !== '' ? [error] : []} />
           </div>
