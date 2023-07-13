@@ -7,19 +7,10 @@ import Frame from '../../components/Frame'
 import Errors from '../../components/Errors'
 import OpenEye from '../../components/OpenEye'
 import CloseEye from '../../components/CloseEye'
-import { AxiosError } from 'axios'
+import { useForm } from 'react-hook-form'
 
 export default function Home() {
 
-  const defaultResult = {
-    status: 200,
-    errors: {
-      name: [],
-      email: [],
-      password: [],
-    }
-  }
- 
   const namefld = useRef<HTMLInputElement>(null)
   const emailfld = useRef<HTMLInputElement>(null)
   const passfld = useRef<HTMLInputElement>(null)
@@ -27,10 +18,15 @@ export default function Home() {
   const [emailErr, setEmailErr] = useState<string[]>([])
   const [passErr, setPassErr] = useState<string[]>([])
   const [error, setError] = useState('')
+  const {register, handleSubmit} = useForm()
   const [showPass, setShowPass] = useState(false)
   const router = useRouter()
 
-  const onClick = async () => {
+  const {ref:nameRef, ...nameRest} = register('name')
+  const {ref:emailRef, ...emailRest} = register('email')
+  const {ref:passRef, ...passRest} = register('password')
+
+  const onSubmit = async () => {
     await axios.get('/sanctum/csrf-cookie')
     axios.post('/api/register', {
       name:namefld.current?.value,
@@ -65,17 +61,20 @@ export default function Home() {
     <Frame>
       <div className="block bg-white mx-auto w-96 p-5">
         <h2 className="mb-2">プレイヤー登録</h2>
-        <form method="post">
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="frex frex-row">
             <label className="label-primary" htmlFor="name">ニックネーム</label>
-            <input className="input-primary" type="text" id="name" placeholder="ニックネーム" ref={namefld}/>
+            <input id="name" className="input-primary" type="text"  placeholder="ニックネーム" 
+              {...nameRest} ref={namefld}/>
             <Errors className="block" messages={nameErr ?? []} />
             <label className="label-primary" htmlFor="email">Eメール</label>
-            <input className="input-primary" type="email" id="email" placeholder="aaa@bbb.com" ref={emailfld} />
+            <input id="email" className="input-primary" type="email" placeholder="aaa@bbb.com"
+              {...emailRest} ref={emailfld} />
             <Errors className="block" messages={emailErr ?? []} />
             <label className="label-primary" htmlFor="password">パスワード</label>
             <div className="flex">
-              <input className="input-primary" type={showPass ? "text" : "password"} id="password" placeholder="パスワード" ref={passfld}/>
+              <input id="password" className="input-primary" type={showPass ? "text" : "password"} placeholder="パスワード"
+                {...passRest} ref={passfld}/>
               <span className="mb-2" onClick={toggleShowPass}>
                 {showPass ? <OpenEye /> : <CloseEye /> }
               </span>
@@ -84,7 +83,7 @@ export default function Home() {
             <Errors className="block" messages={error !== '' ? [error] : []} />
           </div>
           <div>
-            <button className="bg-blue-500 text-white px-5 py-1 shadow" type="button" onClick={onClick}>登録</button>
+            <button className="bg-blue-500 text-white px-5 py-1 shadow" type="submit">登録</button>
           </div>
         </form>
       </div>
