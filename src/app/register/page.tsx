@@ -7,8 +7,10 @@ import Frame from '../../components/Frame'
 import Errors from '../../components/Errors'
 import OpenEye from '../../components/OpenEye'
 import CloseEye from '../../components/CloseEye'
+import { AxiosError } from 'axios'
 
 export default function Home() {
+
   const defaultResult = {
     status: 200,
     errors: {
@@ -20,6 +22,7 @@ export default function Home() {
  
   const [result, setResult] = useState(defaultResult)
   const [showPass, setShowPass] = useState(false)
+  const [error, setError] = useState('')
   const router = useRouter()
 
   const onClick = async () => {
@@ -38,7 +41,13 @@ export default function Home() {
       })
       .catch((err)  =>{
         console.log(err)
-        setResult(err.response.data)
+        if (err.code === 'ERR_BAD_REQUEST') {
+          setError('')
+          setResult(err.response.data)
+        } else {
+          setError(err.message)
+          setResult(defaultResult)
+        }
       })
   } 
 
@@ -50,7 +59,7 @@ export default function Home() {
     <Frame>
       <div className="block bg-white mx-auto w-96 p-5">
         <h2 className="mb-2">プレイヤー登録</h2>
-        <form>
+        <form method="post">
           <div className="frex frex-row">
             <label className="label-primary" htmlFor="name">ニックネーム</label>
             <input className="input-primary" type="text" id="name" placeholder="ニックネーム" />
@@ -66,6 +75,7 @@ export default function Home() {
               </span>
             </div>
             <Errors className="block" messages={result.errors?.password ?? []} />
+            <Errors className="block" messages={error !== '' ? [error] : []} />
           </div>
           <div>
             <button className="bg-blue-500 text-white px-5 py-1 shadow" type="button" onClick={onClick}>登録</button>
