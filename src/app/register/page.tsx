@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import axios from '../axios'
 import Frame from '../../components/Frame'
@@ -107,13 +107,13 @@ export default function Home() {
             <label className="label-primary" htmlFor="name">ニックネーム</label>
             <input id="name" className="input-primary" type="text"
               placeholder="ニックネーム" {...nameRegist}/>
-            {errors.name && <p className="text-red-500">{errors.name.message as string}</p>}
-            <Errors className="block" messages={nameErr ?? []} />
+            {errors.name && <Errors messages={[errors.name.message as string]}/>}
+            <Errors messages={nameErr ?? []} />
             <label className="label-primary" htmlFor="email">Eメール</label>
             <input id="email" className="input-primary" type="email"
               placeholder="aaa@bbb.com" {...emailRegist} />
-            {errors.email && <p className="text-red-500">{errors.email.message as string}</p>}
-            <Errors className="block" messages={emailErr ?? []} />
+            {errors.email && <Errors messages={[errors.email.message as string]} />}
+            <Errors messages={emailErr ?? []} />
             <label className="label-primary" htmlFor="password">パスワード</label>
             <div className="flex">
               <input id="password" className="input-primary" type={showPass ? "text" : "password"}
@@ -122,9 +122,9 @@ export default function Home() {
                 {showPass ? <OpenEye /> : <CloseEye /> }
               </span>
             </div>
-            {errors.password && <p className="text-red-500">{errors.password.message as string}</p>}
-            <Errors className="block" messages={passErr ?? []} />
-            <Errors className="block" messages={error !== '' ? [error] : []} />
+            {errors.password && <Errors messages={[errors.password.message as string]}/>}
+            <Errors messages={passErr ?? []} />
+            <Errors messages={error !== '' ? [error] : []} />
           </div>
           <div>
             <button className="bg-blue-500 text-white px-5 py-1 shadow" type="submit">登録</button>
