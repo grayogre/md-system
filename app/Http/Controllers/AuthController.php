@@ -6,18 +6,47 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Auth\StatefulGuard;
+use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
 
 abstract class AuthController extends Controller
 {
    
-    protected function username()
+    protected function getGuard(): Guard | StatefulGuard
     {
-        return 'email';
+        return Auth::guard(config('auth.defaults.guard'));
+    }
+
+    protected function credentials(Request $request)
+    {
+        return $request->only('email', 'password');
+    }
+
+    protected function attemptLogin(Request $request, bool $remember = false)
+    {
+        return $this->getGuard()->attempt(
+            $this->credentials($request),
+            $remember
+        );
     }
 
     protected function passwordHash($password)
     {
         return Hash::make($password);
+    }
+
+    protected function createToken()
+    {
+        return hash_hmac('sha256', Str::random(40), config('app.key'));
+    }
+
+    protected function tokenExpired($expires, $createdAt)
+    {
+        return Carbon::parse($createdAt)
+            ->addSeconds($expires)
+            ->isPast();
     }
 
     protected function alreadyLogin(Request $request, string $message = null)
