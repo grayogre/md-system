@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import axios from '../axios'
 import Frame from '../../components/Frame'
@@ -11,7 +11,6 @@ import { useForm } from 'react-hook-form'
 
 export default function Home() {
 
-  const [nameErr, setNameErr] = useState<any>([])
   const [emailErr, setEmailErr] = useState<any>([])
   const [passErr, setPassErr] = useState<any>([])
   const [error, setError] = useState('')
@@ -26,12 +25,6 @@ export default function Home() {
     mode: 'onBlur',
   })
 
-  const nameRegist = register('name', {
-    required: {
-      value: true,
-      message: 'ニックネームを入力してください。'
-    }
-  })
   const emailRegist = register('email', {
     required: {
       value: true,
@@ -46,20 +39,11 @@ export default function Home() {
     required: {
       value: true,
       message: 'パスワードを入力してください。'
-    },
-    pattern: {
-      value: /^[\w\d]+$/,
-      message: 'パスワードは英数字にしてください。'
-    },
-    minLength: {
-      value: 6,
-      message: 'パスワードは6文字以上にしてください。'
     }
   })
 
   const showCriticalError = (message:string) => {
     setError(message)
-    setNameErr([])
     setEmailErr([])
     setPassErr([])
   }
@@ -67,22 +51,23 @@ export default function Home() {
   const onSubmit = () => {
     axios.get('/sanctum/csrf-cookie')
       .then((res) => {
-        axios.post('/api/register', {
-          name: getValues('name'),
+        axios.post('/api/login', {
           email: getValues('email'),
           password: getValues('password')
         },)
           .then((res) => {
             console.log('reg', res)
-            router.push('/')
+            router.push('/menu')
           })
           .catch((err) => {
             console.log(err)
-            if (err.response.status === 400) {
+            const status = err.response.status;
+            if (status === 400) {
               setError('')
-              setNameErr(err.response.data.errors?.name)
               setEmailErr(err.response.data.errors?.email)
               setPassErr(err.response.data.errors?.password)
+            } else if (status === 401) {
+              showCriticalError(err.response.data.message)
             } else {
               showCriticalError(err.message)
             }
@@ -101,14 +86,9 @@ export default function Home() {
   return (
     <Frame>
       <div className="block bg-white mx-auto w-96 p-5">
-        <h2 className="mb-2">プレイヤー登録</h2>
+        <h2 className="mb-2">ログイン</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="frex frex-row">
-            <label className="label-primary" htmlFor="name">ニックネーム</label>
-            <input id="name" className="input-primary" type="text"
-              placeholder="ニックネーム" {...nameRegist}/>
-            {errors.name && <Errors messages={[errors.name.message as string]}/>}
-            <Errors messages={nameErr ?? []} />
             <label className="label-primary" htmlFor="email">Eメール</label>
             <input id="email" className="input-primary" type="email"
               placeholder="aaa@bbb.com" {...emailRegist} />
@@ -127,7 +107,7 @@ export default function Home() {
             <Errors messages={error !== '' ? [error] : []} />
           </div>
           <div>
-            <button className="bg-blue-500 text-white px-5 py-1 shadow" type="submit">登録</button>
+            <button className="bg-blue-500 text-white px-5 py-1 shadow" type="submit">ログイン</button>
           </div>
         </form>
       </div>
