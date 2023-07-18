@@ -6,8 +6,7 @@ use App\Http\Requests\LoginRequest;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Controllers\AuthController;
 use App\Models\User;
-use Illuminate\Http\Exceptions\HttpResponseException;
-
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class LoginController extends AuthController
 {
@@ -23,10 +22,10 @@ class LoginController extends AuthController
             $userId = User::where('email','=', $request->email)->first()->id();
             return response()->json(['id' => $userId], Response::HTTP_OK);
         }
-        $res = response()->json(
-            ['meaage' => 'メールアドレスかパスワードが違います。'],
-            Response::HTTP_UNAUTHORIZED
+
+        return response()->json(
+            ['message' =>'メールアドレスかパスワードが違います。'],
+            Response::HTTP_UNAUTHORIZED 
         );
-        throw new HttpResponseException($res);  
     }
 }
