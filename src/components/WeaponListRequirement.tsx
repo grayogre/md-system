@@ -6,6 +6,7 @@ import Errors from './Errors'
 export default function WeaponListReqirement(props: {setList: (value:any[]) => void })
 {
   const [namePart, setNamePart] = useState('')
+  const [attackType, setAttackType] = useState('-1')
   const [myWeapon, setMyWeapon] = useState(false)
   const [headMount, setHeadMount] = useState(true)
   const [handMount, setHandMount] = useState(true)
@@ -22,6 +23,7 @@ export default function WeaponListReqirement(props: {setList: (value:any[]) => v
     axios.get('/api/weapon/list', {
       params: {
         namePart: namePart,
+        attackType: attackType,
         myWeapon: myWeapon ? '1' : '0',
         headMountable: headMount ? '1' : '0',
         handMountable: handMount ? '1' : '0',
@@ -47,13 +49,17 @@ export default function WeaponListReqirement(props: {setList: (value:any[]) => v
     setNamePart(e.target.value)
   }
 
+  const onChangeType = (e:React.ChangeEvent<HTMLSelectElement>) => {
+    setAttackType(e.target.value)
+  }
+
   const onChangeBool = (e:React.ChangeEvent<HTMLInputElement>, setBool:(b:boolean) => void) => {
     setBool(e.target.checked)
   } 
 
   useEffect(() => {doQuery()}, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [namePart, myWeapon, headMount, handMount, armMount, shoulderMount, torsoMount, legMount]
+    [namePart, attackType, myWeapon, headMount, handMount, armMount, shoulderMount, torsoMount, legMount]
   )
 
   return (
@@ -61,7 +67,14 @@ export default function WeaponListReqirement(props: {setList: (value:any[]) => v
       <fieldset className="flex flex-row justify-start border border-solid border-black p-3">
         <legend>絞り込み条件</legend>
         <label htmlFor="namePart" className="ml-5" >武器名</label>
-        <input id="namePart" type="text" className="border border-solid border-black" value={namePart} onChange={onChangeName} />
+        <input id="namePart" type="text" className="border border-solid border-black px-1" value={namePart} onChange={onChangeName} />
+        <label htmlFor="typeSelect" className="ml-5">種別</label>
+        <select id="typeSelect" onChange={onChangeType} value={attackType} className="border border-solid border-black">
+          <option value="-1">(未指定)</option>
+          <option value="0">射撃</option>
+          <option value="1">白兵</option>
+          <option value="2">盾</option>
+        </select>
         <input id="myWeapon" type="checkbox" className="ml-5" checked={myWeapon} onChange={(e) => onChangeBool(e, setMyWeapon)} />
         <label htmlFor="myWeapon">自分で登録</label>
         <input id="head" type="checkbox" className="ml-5" checked={headMount} onChange={(e) => onChangeBool(e, setHeadMount)} />
