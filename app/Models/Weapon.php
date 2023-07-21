@@ -23,7 +23,7 @@ class Weapon extends Model
         return $this->belongsTo(User::class);
     }
 
-    public static function SummaryList(string $namePart, ?int $userId,
+    public static function SummaryList(string $namePart, int $attackType, ?int $userId,
         string $headMountable, string $handMountable, string $armMountable,
         string $shoulderMountable, string $torsoMountable, string $legMounbtable
     )
@@ -34,6 +34,9 @@ class Weapon extends Model
             ->select('weapons.*', 'users.name as register', 'users.id as uid');
         if ($namePart != '') {
             $query = $query->where('weapon_name','LIKE', '%'.addcslashes($namePart, '%_\\').'%');
+        }
+        if ($attackType >= 0 && $attackType <= 2) {
+            $query = $query->where('attack_type', '=', $attackType);
         }
         if (!is_null($userId)) {
             $query = $query->where('user_id', '=', $userId);

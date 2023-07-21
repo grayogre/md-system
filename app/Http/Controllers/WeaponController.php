@@ -13,6 +13,7 @@ class WeaponController extends Controller
         if (is_null($namePart)) {
             $namePart = '';
         }
+        $attackType = intval($request->input('attackType'));
         $userId = $request->input('myWeapon') ? Auth::id() : null;
         $headMountable = $request->input('headMountable');
         $handMountable = $request->input('handMountable');
@@ -21,7 +22,8 @@ class WeaponController extends Controller
         $torsoMountable = $request->input('torsoMountable');
         $legMountable = $request->input('legMountable');
         return Weapon::SummaryList(
-            $namePart,    
+            $namePart,
+            $attackType,
             $userId,
             $headMountable,
             $handMountable,
