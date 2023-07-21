@@ -23,16 +23,20 @@ class Weapon extends Model
         return $this->belongsTo(User::class);
     }
 
-    public static function SummaryList(string $namePart, int $userId,
+    public static function SummaryList(string $namePart, ?int $userId,
         string $headMountable, string $handMountable, string $armMountable,
         string $shoulderMountable, string $torsoMountable, string $legMounbtable
     )
     {
         $summary = [];
 
-        $query = Weapon::with('user')->where('weapon_name','LIKE', '%'.addcslashes($namePart, '%_\\').'%');
+        $query = Weapon::with('user')->join('users','users.id','=','weapons.user_id')
+            ->select('weapons.*', 'users.name as register', 'users.id as uid');
+        if ($namePart != '') {
+            $query = $query->where('weapon_name','LIKE', '%'.addcslashes($namePart, '%_\\').'%');
+        }
         if (!is_null($userId)) {
-            $query = $query->where('user_id', '=', strval($userId));
+            $query = $query->where('user_id', '=', $userId);
         }   
         $query->where(function($q) use ($headMountable, $handMountable, $armMountable, $shoulderMountable, $torsoMountable, $legMounbtable) {
             $orFlag = false;
@@ -81,7 +85,7 @@ class Weapon extends Model
                 }
             }
             if (!$orFlag) {
-                $q->where('id', '=', '-1');
+                $q->where('weapons.id', '=', '-1');
             }
         });
 
@@ -89,9 +93,9 @@ class Weapon extends Model
         foreach ($weapons as $weapon)
         {
             $row = [];
-            $row['id'] = $weapon['id'];
+            $row['id'] = $weapon['weapon.id'];
             $row['weapon_name'] = $weapon['weapon_name'];
-            $row['register'] = $weapon->user()->name;
+            $row['register'] = $weapon['register'];
             $row['attack_type'] = Weapon::AttackTypeTable[$weapon['attack_type']];
             $power_total = $weapon['power_impact'] + $weapon['power_penetrate'] + $weapon['power_heat'];
             $row['power_total'] = $power_total;
@@ -102,7 +106,26 @@ class Weapon extends Model
             $row['hit_rate'] = $weapon['hit_rate'];
             $row['parry_rate'] = $weapon['parry_rate'];
             $row['failure_rate'] = Weapon::failure_rate($power_total, $weapon['min_range'],$weapon['max_range'], $total_waight, $weapon['hit_rate'], $weapon['parry_rate']);
-        
+            $mount_pos = '';
+            if ($weapon['can_mount_head'] === 1) {
+                $mount_pos .= '頭';
+            }
+            if ($weapon['can_mount_hand'] === 1) {
+                $mount_pos .= '手';
+            }
+            if ($weapon['can_mount_arm'] === 1) {
+                $mount_pos .= '腕';
+            }
+            if ($weapon['can_mount_shoulder'] === 1) {
+                $mount_pos .= '肩';
+            }
+            if ($weapon['can_mount_torso'] === 1) {
+                $mount_pos .= '胴';
+            }
+            if ($weapon['can_mount_leg'] === 1) {
+                $mount_pos .= '脚';
+            }
+            $row['mount_position'] = $mount_pos;
             $summary[] = $row;
         } 
 
@@ -123,12 +146,16 @@ class Weapon extends Model
         return $weight;
     }
 
-    public static function fallure_rate(int $power_total, int $min_range,
+    public static function failure_rate(int $power_total, int $min_range,
         int $max_range, int $total_weight, int $hit_rate, int $parry_rate) 
     {
-        return intval(((($power_total / 8.0 + 5.0) ** 2.0) / 2.0 + (($max_range / 10.0) ** 2.0) / 2.0
+        $rate = intval(((($power_total / 8.0 + 5.0) ** 2.0) / 2.0 + (($max_range / 10.0) ** 2.0) / 2.0
                 + ((($max_range - $min_range) / 10.0) ** 2.0) / 2.0  - $total_weight) / 5.0
                 + ((($hit_rate - 50.0) / 20.0) ** 3.0) / 2.0
-                + (($parry_rate / 20.0) ** 2.0) / 2.0); 
+                + (($parry_rate / 20.0) ** 2.0) / 2.0);
+        if ($rate < 1) {
+            $rate = 1;
+        }
+        return $rate; 
     }
 }

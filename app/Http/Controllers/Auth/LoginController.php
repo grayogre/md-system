@@ -19,7 +19,7 @@ class LoginController extends AuthController
 
         if ($this->attemptLogin($request)) {
             $request->session()->regenerate();
-            $userId = User::where('email','=', $request->email)->first()->id();
+            $userId = User::where('email','=', $request->email)->first()->id;
             return response()->json(['id' => $userId], Response::HTTP_OK);
         }
 

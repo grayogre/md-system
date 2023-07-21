@@ -18,7 +18,7 @@ class WeaponFactory extends Factory
     {
         return [
             'weapon_name' => $this->faker->word(),
-            'user_id' => $this->faker->numberBetween(1, 11),
+            'user_id' => 1,
             'power_impact' => $this->faker->numberBetween(0, 50),
             'power_penetrate' => $this->faker->numberBetween(0, 50),
             'power_heat' => $this->faker->numberBetween(0, 50),
