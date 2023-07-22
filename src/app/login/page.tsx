@@ -11,8 +11,11 @@ import { useForm } from 'react-hook-form'
 
 export default function Home() {
 
-  const [emailErr, setEmailErr] = useState<any>([])
-  const [passErr, setPassErr] = useState<any>([])
+  const initServarErr = {
+    email:[],
+    password:[]
+  }
+  const [serverErr, setServerErr] = useState(initServarErr)
   const [error, setError] = useState('')
   const [showPass, setShowPass] = useState(false)
   const router = useRouter()
@@ -44,8 +47,7 @@ export default function Home() {
 
   const showCriticalError = (message:string) => {
     setError(message)
-    setEmailErr([])
-    setPassErr([])
+    setServerErr(initServarErr)
   }
 
   const onSubmit = () => {
@@ -64,8 +66,7 @@ export default function Home() {
             const status = err.response.status;
             if (status === 400) {
               setError('')
-              setEmailErr(err.response.data.errors?.email)
-              setPassErr(err.response.data.errors?.password)
+              setServerErr(err.response.data.errors)
             } else if (status === 401) {
               showCriticalError(err.response.data.message)
             } else {
@@ -93,7 +94,7 @@ export default function Home() {
             <input id="email" className="input-primary" type="email"
               placeholder="aaa@bbb.com" {...emailRegist} />
             {errors.email && <Errors messages={[errors.email.message as string]} />}
-            <Errors messages={emailErr ?? []} />
+            <Errors messages={serverErr.email ?? []} />
             <label className="label-primary" htmlFor="password">パスワード</label>
             <div className="flex">
               <input id="password" className="input-primary" type={showPass ? "text" : "password"}
@@ -103,7 +104,7 @@ export default function Home() {
               </span>
             </div>
             {errors.password && <Errors messages={[errors.password.message as string]}/>}
-            <Errors messages={passErr ?? []} />
+            <Errors messages={serverErr.password ?? []} />
             <Errors messages={error !== '' ? [error] : []} />
           </div>
           <div>

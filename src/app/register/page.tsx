@@ -11,9 +11,12 @@ import { useForm } from 'react-hook-form'
 
 export default function Home() {
 
-  const [nameErr, setNameErr] = useState<any>([])
-  const [emailErr, setEmailErr] = useState<any>([])
-  const [passErr, setPassErr] = useState<any>([])
+  const initServarErr = {
+    name:[],
+    email:[],
+    password:[]
+  }
+  const [serverErr, setServerErr] = useState(initServarErr)
   const [error, setError] = useState('')
   const [showPass, setShowPass] = useState(false)
   const router = useRouter()
@@ -59,9 +62,7 @@ export default function Home() {
 
   const showCriticalError = (message:string) => {
     setError(message)
-    setNameErr([])
-    setEmailErr([])
-    setPassErr([])
+    setServerErr(initServarErr)
   }
 
   const onSubmit = () => {
@@ -80,9 +81,7 @@ export default function Home() {
             console.log(err)
             if (err.response.status === 400) {
               setError('')
-              setNameErr(err.response.data.errors?.name)
-              setEmailErr(err.response.data.errors?.email)
-              setPassErr(err.response.data.errors?.password)
+              setServerErr(err.response.data.errors)
             } else {
               showCriticalError(err.message)
             }
@@ -108,12 +107,12 @@ export default function Home() {
             <input id="name" className="input-primary" type="text"
               placeholder="ニックネーム" {...nameRegist}/>
             {errors.name && <Errors messages={[errors.name.message as string]}/>}
-            <Errors messages={nameErr ?? []} />
+            <Errors messages={serverErr.name ?? []} />
             <label className="label-primary" htmlFor="email">Eメール</label>
             <input id="email" className="input-primary" type="email"
               placeholder="aaa@bbb.com" {...emailRegist} />
             {errors.email && <Errors messages={[errors.email.message as string]} />}
-            <Errors messages={emailErr ?? []} />
+            <Errors messages={serverErr.email ?? []} />
             <label className="label-primary" htmlFor="password">パスワード</label>
             <div className="flex">
               <input id="password" className="input-primary" type={showPass ? "text" : "password"}
@@ -123,7 +122,7 @@ export default function Home() {
               </span>
             </div>
             {errors.password && <Errors messages={[errors.password.message as string]}/>}
-            <Errors messages={passErr ?? []} />
+            <Errors messages={serverErr.password ?? []} />
             <Errors messages={error !== '' ? [error] : []} />
           </div>
           <div>
