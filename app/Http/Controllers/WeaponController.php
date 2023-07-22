@@ -14,7 +14,8 @@ class WeaponController extends Controller
             $namePart = '';
         }
         $attackType = intval($request->input('attackType'));
-        $userId = $request->input('myWeapon') ? Auth::id() : null;
+        $myWeapon = boolval($request->input('myWeapon'));
+        $userId = Auth::id();
         $headMountable = $request->input('headMountable');
         $handMountable = $request->input('handMountable');
         $armMountable = $request->input('armMountable');
@@ -24,6 +25,7 @@ class WeaponController extends Controller
         return Weapon::SummaryList(
             $namePart,
             $attackType,
+            $myWeapon,
             $userId,
             $headMountable,
             $handMountable,

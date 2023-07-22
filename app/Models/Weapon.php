@@ -23,8 +23,8 @@ class Weapon extends Model
         return $this->belongsTo(User::class);
     }
 
-    public static function SummaryList(string $namePart, int $attackType, ?int $userId,
-        string $headMountable, string $handMountable, string $armMountable,
+    public static function SummaryList(string $namePart, int $attackType, bool $myWeapon,
+        int $userId, string $headMountable, string $handMountable, string $armMountable,
         string $shoulderMountable, string $torsoMountable, string $legMounbtable
     )
     {
@@ -38,7 +38,7 @@ class Weapon extends Model
         if ($attackType >= 0 && $attackType <= 2) {
             $query = $query->where('attack_type', '=', $attackType);
         }
-        if (!is_null($userId)) {
+        if ($myWeapon) {
             $query = $query->where('user_id', '=', $userId);
         }   
         $query->where(function($q) use ($headMountable, $handMountable, $armMountable, $shoulderMountable, $torsoMountable, $legMounbtable) {
@@ -99,6 +99,7 @@ class Weapon extends Model
             $row['id'] = $weapon['weapon.id'];
             $row['weapon_name'] = $weapon['weapon_name'];
             $row['register'] = $weapon['register'];
+            $row['myWeapon'] = $weapon['user_id'] === $userId;
             $row['attack_type'] = Weapon::AttackTypeTable[$weapon['attack_type']];
             $power_total = $weapon['power_impact'] + $weapon['power_penetrate'] + $weapon['power_heat'];
             $row['power_total'] = $power_total;
