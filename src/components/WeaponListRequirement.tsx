@@ -64,31 +64,48 @@ export default function WeaponListReqirement(props: {setList: (value:any[]) => v
 
   return (
     <form>
-      <fieldset className="flex flex-row justify-start border border-solid border-black p-3">
+      <fieldset className="flex md:flex-row flex-col justify-start border border-solid border-black p-3">
         <legend>絞り込み条件</legend>
-        <label htmlFor="namePart" className="ml-5" >武器名</label>
-        <input id="namePart" type="text" className="border border-solid border-black px-1" value={namePart} onChange={onChangeName} />
-        <label htmlFor="typeSelect" className="ml-5">種別</label>
-        <select id="typeSelect" onChange={onChangeType} value={attackType} className="border border-solid border-black">
-          <option value="-1">(未指定)</option>
-          <option value="0">射撃</option>
-          <option value="1">白兵</option>
-          <option value="2">盾</option>
-        </select>
-        <input id="myWeapon" type="checkbox" className="ml-5" checked={myWeapon} onChange={(e) => onChangeBool(e, setMyWeapon)} />
-        <label htmlFor="myWeapon">自分で登録</label>
-        <input id="head" type="checkbox" className="ml-5" checked={headMount} onChange={(e) => onChangeBool(e, setHeadMount)} />
-        <label htmlFor="head">頭装備</label>
-        <input id="hand" type="checkbox" className="ml-5" checked={handMount} onChange={(e) => onChangeBool(e, setHandMount)} />
-        <label htmlFor="hand">手装備</label>
-        <input id="arm" type="checkbox" className="ml-5" checked={armMount} onChange={(e) => onChangeBool(e, setArmMount)} />
-        <label htmlFor="arm">腕装備</label>
-        <input id="shoulder" type="checkbox" className="ml-5" checked={shoulderMount} onChange={(e) => onChangeBool(e, setShoulderMount)} />
-        <label htmlFor="shoulder">肩装備</label>
-        <input id="torso" type="checkbox" className="ml-5" checked={torsoMount} onChange={(e) => onChangeBool(e, setTorsoMount)} />
-        <label htmlFor="torso">胴装備</label>
-        <input id="leg" type="checkbox" className="ml-5" checked={legMount} onChange={(e) => onChangeBool(e, setLegMount)} />
-        <label htmlFor="leg">脚装備</label>
+        <label className="ml-5" >武器名
+          <input type="text" className="border border-solid border-black px-1 w-32" value={namePart} onChange={onChangeName} />
+        </label>
+        <label className="ml-5">種別
+          <select onChange={onChangeType} value={attackType} className="border border-solid border-black">
+            <option value="-1">(未指定)</option>
+            <option value="0">射撃</option>
+            <option value="1">白兵</option>
+            <option value="2">盾</option>
+          </select>
+        </label>
+        
+        <label className="ml-5">
+          <input type="checkbox"  checked={myWeapon} onChange={(e) => onChangeBool(e, setMyWeapon)} />
+          自分で登録
+        </label>
+        <label className="ml-5">
+          <input type="checkbox" checked={headMount} onChange={(e) => onChangeBool(e, setHeadMount)} />
+          頭装備
+        </label>
+        <label className="ml-5">
+          <input type="checkbox" checked={handMount} onChange={(e) => onChangeBool(e, setHandMount)} />
+          手装備
+        </label>
+        <label className="ml-5">
+          <input type="checkbox" checked={armMount} onChange={(e) => onChangeBool(e, setArmMount)} />
+          腕装備
+        </label>
+        <label className="ml-5">
+          <input type="checkbox" checked={shoulderMount} onChange={(e) => onChangeBool(e, setShoulderMount)} />
+          肩装備
+        </label>
+        <label className="ml-5">
+          <input type="checkbox" checked={torsoMount} onChange={(e) => onChangeBool(e, setTorsoMount)} />
+          胴装備
+        </label>
+        <label className="ml-5">
+          <input type="checkbox" checked={legMount} onChange={(e) => onChangeBool(e, setLegMount)} />
+          脚装備
+        </label>
       </fieldset>
       <Errors messages={errMsg !== '' ? [errMsg] : []} />
     </form>

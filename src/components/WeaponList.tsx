@@ -68,7 +68,7 @@ export default function WeaponList(props: {list:any[]}) {
   }
 
   return (
-    <table className="table border border-solid border-separate border-black">
+    <table className="table border border-solid border-separate border-black mt-2 overflow-scroll">
       <thead>
         <tr>
           <th className="text-start px-2 border border-solid border-black"></th>
@@ -112,8 +112,12 @@ export default function WeaponList(props: {list:any[]}) {
           return (
             <tr key={weapon.id}>
               <td className="text-start px-2 border border-solid border-black">
-                <button className="m-1 px-1 border border-solid border-blue-500 rounded">参照</button>
-                <button className="m-1 px-1 border border-solid border-blue-500 rounded">更新</button>
+                <button className="m-1 px-1 border border-solid border-blue-500 rounded">
+                  参照
+                </button>
+                <button className="m-1 px-1 border border-solid border-blue-500 rounded">
+                  {weapon.myWeapon ? '編集' : 'コピー'}
+                </button>
               </td>
               <td className="text-start px-2 border border-solid border-black">{weapon.weapon_name}</td>
               <td className="text-start px-2 border border-solid border-black">{weapon.register}</td>
