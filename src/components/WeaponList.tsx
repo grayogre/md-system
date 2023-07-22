@@ -4,16 +4,23 @@ type sortType = {
   field:string,
   order:number
 }
-export default function WeaponList(props: {list:any[], setList:(a:any) => void }) {
+export default function WeaponList(props: {list:any[]}) {
 
   const ASC = 1
   const DESC = -1
 
   const list = props.list
-  const setList = props.setList
+
+  const [sortedList, setSortedList] = useState([...list])
 
   const initialOption:sortType = {field:'', order: ASC}
   const [sortOption, setSortOption] = useState(initialOption)
+
+  useEffect(() => {
+    setSortedList([...list])
+    setSortOption(initialOption) 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[list])
 
   const compare = (data1:any, data2:any)  => {
     if (data1 < data2) {
@@ -30,16 +37,16 @@ export default function WeaponList(props: {list:any[], setList:(a:any) => void }
     if (sortOption.field === '') {
       return
     }
-    const newList = list.sort((data1, data2) => 
+    const listCopy = [...sortedList]
+    const newList = listCopy.sort((data1, data2) => 
       compare(data1[sortOption.field], data2[sortOption.field]))
-    setList(newList)
+    setSortedList(newList)
   }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => sort(), [sortOption])
 
   const changeSort = (fieldName:string) => {
-    console.log('cs0', sortOption)
     let newOption:sortType = sortOption
     if (fieldName === sortOption.field) {
       newOption = {field:fieldName, order: -1 * sortOption.order}
@@ -47,7 +54,6 @@ export default function WeaponList(props: {list:any[], setList:(a:any) => void }
       newOption = {field:fieldName, order:ASC}
     }
     setSortOption(newOption)
-    console.log('cs1', sortOption)
   }
 
   const sortSymbol = (fieldName:string) => {
@@ -102,7 +108,7 @@ export default function WeaponList(props: {list:any[], setList:(a:any) => void }
         </tr>
       </thead>
       <tbody>
-        {list.map((weapon) => {
+        {sortedList.map((weapon) => {
           return (
             <tr key={weapon.id}>
               <td className="text-start px-2 border border-solid border-black">
