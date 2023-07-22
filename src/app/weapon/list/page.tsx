@@ -11,9 +11,9 @@ export default function Home() {
 
   return (
     <Frame>
-      <div className="block bg-white mx-auto p-5">
+      <div className="block bg-white mx-auto p-5 w-3/4">
         <Requirement setList={setList} />
-        <WeaponList list={list} />
+        <WeaponList list={list} setList={setList} />
       </div>
     </Frame>
   )
