@@ -126,9 +126,9 @@ export default function WeaponList(props: {list:any[]}) {
               <td className="text-center px-2 border border-solid border-black">{weapon.ammo_type}</td>
               <td className="text-center px-2 border border-solid border-black">{weapon.atacck_range}</td>
               <td className="text-end px-2 border border-solid border-black">{weapon.total_waight}</td>
-              <td className="text-end px-2 border border-solid border-black">{weapon.hit_rate}</td>
-              <td className="text-end px-2 border border-solid border-black">{weapon.parry_rate}</td>
-              <td className="text-end px-2 border border-solid border-black">{weapon.failure_rate}</td>
+              <td className="text-end px-2 border border-solid border-black">{weapon.hit_rate}%</td>
+              <td className="text-end px-2 border border-solid border-black">{weapon.parry_rate}%</td>
+              <td className="text-end px-2 border border-solid border-black">{weapon.failure_rate}%</td>
               <td className="text-center px-2 border border-solid border-black">{weapon.mount_position}</td>
             </tr>
           )
