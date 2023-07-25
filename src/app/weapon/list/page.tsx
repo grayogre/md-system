@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Requirement from '../../../components/WeaponListRequirement'
 import Frame from '../../../components/Frame'
+import Header from '../../../components/HeaderOnLogin'
 import WeaponList from '../../../components/WeaponList'
 
 export default function Home() {
@@ -13,8 +14,9 @@ export default function Home() {
   return (
     <Frame>
       <div className="block bg-white mx-auto p-5 md:w-3/4">
-        <Requirement setList={setList} />
-        <WeaponList list={list} />
+        <Header />
+          <Requirement setList={setList} />
+          <WeaponList list={list} />
       </div>
     </Frame>
   )

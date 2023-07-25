@@ -126,7 +126,7 @@ export default function Home() {
             <Errors messages={error !== '' ? [error] : []} />
           </div>
           <div>
-            <button className="bg-blue-500 text-white px-5 py-1 shadow" type="submit">登録</button>
+            <button className="button-primary" type="submit">登録</button>
           </div>
         </form>
       </div>

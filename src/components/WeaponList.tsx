@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 type sortType = {
   field:string,
@@ -6,6 +7,7 @@ type sortType = {
 }
 export default function WeaponList(props: {list:any[]}) {
 
+  console.log('list:', props.list)
   const ASC = 1
   const DESC = -1
 
@@ -15,6 +17,8 @@ export default function WeaponList(props: {list:any[]}) {
 
   const initialOption:sortType = {field:'', order: ASC}
   const [sortOption, setSortOption] = useState(initialOption)
+
+  const router = useRouter()
 
   useEffect(() => {
     setSortedList([...list])
@@ -67,6 +71,12 @@ export default function WeaponList(props: {list:any[]}) {
     return ''
   }
 
+  const showView = (id:number) => {
+    console.log('id:',id)
+    const url = '/weapon/view/' + String(id)
+    router.push(url)
+  }
+
   return (
     <table className="table border border-solid border-separate border-black mt-2 overflow-scroll">
       <thead>
@@ -112,7 +122,7 @@ export default function WeaponList(props: {list:any[]}) {
           return (
             <tr key={weapon.id}>
               <td className="text-start px-2 border border-solid border-black">
-                <button className="m-1 px-1 border border-solid border-blue-500 rounded">
+                <button className="m-1 px-1 border border-solid border-blue-500 rounded" onClick={(e:any) => showView(weapon.id)} >
                   参照
                 </button>
                 <button className="m-1 px-1 border border-solid border-blue-500 rounded">
