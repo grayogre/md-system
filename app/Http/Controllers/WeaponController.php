@@ -35,4 +35,8 @@ class WeaponController extends Controller
             $legMountable
         );
     }
+
+    public function index($id) {
+        return Weapon::getDetail($id);
+    }
 }

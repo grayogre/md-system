@@ -23,9 +23,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-    Route::get('/weapon/list', [WeaponController::class, 'list'])->name('weapon.list');
+    Route::get('/weapon/list', [WeaponController::class, 'list']);
+    Route::get('/weapon/index/{id}', [WeaponController::class, 'index']);
 });
 
 Route::post('/register', RegisterController::class);
-Route::post('/login', LoginController::class);
+Route::post('/login', LoginController::class)->name('login');
 Route::post('/logout', LogoutController::class);
