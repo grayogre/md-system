@@ -56,7 +56,7 @@ abstract class AuthController extends Controller
 
         // already logged in
         if (auth()->check()) {
-            throw new HttpException(403, $message);
+            throw new HttpException(302, $message);
         }
     }
 
