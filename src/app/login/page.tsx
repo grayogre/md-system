@@ -69,6 +69,8 @@ export default function Home() {
               setServerErr(err.response.data.errors)
             } else if (status === 401) {
               showCriticalError(err.response.data.message)
+            } else if (status === 302) {
+              router.push('/menu')
             } else {
               showCriticalError(err.message)
             }

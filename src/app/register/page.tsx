@@ -82,6 +82,8 @@ export default function Home() {
             if (err.response.status === 400) {
               setError('')
               setServerErr(err.response.data.errors)
+            } else if (err.response.status === 302) {
+              showCriticalError(err.response.data.message)
             } else {
               showCriticalError(err.message)
             }

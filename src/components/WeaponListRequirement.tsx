@@ -41,7 +41,6 @@ export default function WeaponListReqirement(props: {setList: (value:any[]) => v
     }).catch((err) => {
       console.log('error:', err)
       if (err.response.status === 401) {
-        setErrMsg("ログインしていません。")
         router.push('/login')
       } else if (err.response.status === 429) {
         setErrMsg("検索頻度が多すぎます。しばらくお待ち下さい。")
