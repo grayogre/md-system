@@ -1,6 +1,6 @@
-import {redirect} from 'next/navigation'
-import { headers } from 'next/headers';
+import { redirect } from 'next/navigation'
 import axios from '../../../axios'
+import { getAllCookies } from '../../../getAllCookies'
 import Frame from '../../../../components/Frame'
 import Header from '../../../../components/HeaderOnLogin'
 import FixedField from '../../../../components/FixedField'
@@ -8,19 +8,27 @@ import FixedFieldFull from '../../../../components/FixedFieldFull'
 import Errors from '../../../../components/Errors' 
 
 export default async function Home({params}: {params: {id : string}}) {
-  const headerList = headers()
-  console.log(headerList) 
+
+  const cookies = getAllCookies();
+  axios.defaults.headers.common = {
+    "Content-Type": "application/json",
+    cookies: cookies,
+    Origin: "http://localhost:3000",
+  }
 
   const response = await axios.get('/api/weapon/index/' + params.id)
                           .catch((err) => { return err.response })
+  console.log('view:', response)
   let message = ''
   if (response.status === 401) {
     redirect('/login')
   } else if (response.status !== 200) {
-    message = response.data.message;
+    message = String(response.status) + ':' 
+            + (response.data?.message ?? response.statusText)
     return (
       <Frame>
-        <div className="grid grid-cols-3 gap-3 bg-white mx-auto p-5 w-96">
+        <div className="grid grid-cols-1 gap-3 bg-white mx-auto p-5 w-96">
+          <Header />
           <Errors messages={[message]} />
         </div>
       </Frame>
