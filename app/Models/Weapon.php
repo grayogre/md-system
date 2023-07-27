@@ -124,7 +124,7 @@ class Weapon extends Model
         $result['id'] = $weapon['id'];
         $result['weapon_name'] = $weapon['weapon_name'];
         $result['user_id'] = $weapon['user_id'];
-        $result['register'] = $weapon->user()->name;
+        $result['register'] = $weapon->user->name;
         $result['power_impact'] = $weapon['power_impact'];
         $result['power_penetrate'] = $weapon['power_penetrate'];
         $result['power_heat'] = $weapon['power_heat'];

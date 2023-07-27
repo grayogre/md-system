@@ -44,6 +44,6 @@ class User extends Authenticatable
     ];
 
     public function weapons() {
-        return $this->hasMany(App\Models\Weapon::class);
+        return $this->hasMany(Weapon::class);
     }
 }
