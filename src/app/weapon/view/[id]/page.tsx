@@ -1,5 +1,3 @@
-"use client"
-import { useState, useEffect} from 'react'
 import { redirect } from 'next/navigation'
 import axios from '../../../axios'
 import { getAllCookies } from '../../../getAllCookies'
@@ -8,38 +6,36 @@ import Header from '../../../../components/HeaderOnLogin'
 import FixedField from '../../../../components/FixedField'
 import FixedFieldFull from '../../../../components/FixedFieldFull'
 import Errors from '../../../../components/Errors' 
-import { AxiosError } from 'axios'
-import { WeaponDetail, initWeaponDetail } from '../../WeaponDetailType'
-export default function Home({params}: {params: {id : string}}) {
 
-  const [ weapon, setWeapon] = useState<WeaponDetail>(initWeaponDetail())
-  const [ error, setError ] = useState('')
- 
-  useEffect(() => {
-    axios.get('/api/weapon/index/' + params.id)
-      .then((res) => {
-        console.log(res)
-        setWeapon(res.data)
-      })
-      .catch((err: AxiosError) => {
-        if (err.status === 401) {
-          redirect('/login')
-        } else if (err.status !== 200) {
-          const message = String(err.status) + ':' + (err.message)
-        }
-      })
-  }, [])
-  if (error !== '') {
+export default async function Home({params}: {params: {id : string}}) {
+
+  const cookies = getAllCookies();
+  axios.defaults.headers.common = {
+    "Content-Type": "application/json",
+    Cookie: cookies,
+    Origin: process.env.ORIGIN_HEADER,
+    Referer: process.env.ORIGIN_HEADER
+  }
+
+  const response = await axios.get('/api/weapon/index/' + params.id)
+                          .catch((err) => { return err.response })
+  let message = ''
+  if (response.status === 401) {
+    redirect('/login')
+  } else if (response.status !== 200) {
+    message = String(response.status) + ':' 
+            + (response.data?.message ?? response.statusText)
     return (
       <Frame>
         <div className="grid grid-cols-1 gap-3 bg-white mx-auto p-5 w-96">
           <Header />
-          <Errors messages={[error]} />
+          <Errors messages={[message]} />
         </div>
       </Frame>
     )
   }
 
+  const weapon = response.data
   return (
     <Frame>
       <div className="bg-white mx-auto p-5 w-96">
