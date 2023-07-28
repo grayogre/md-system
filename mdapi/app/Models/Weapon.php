@@ -119,7 +119,7 @@ class Weapon extends Model
 
     public static function getDetail(int $id)
     {
-        $weapon = Weapon::where('id', $id)->first();
+        $weapon = Weapon::where('id', $id)->firstOrFail();
         $result = [];
         $result['id'] = $weapon['id'];
         $result['weapon_name'] = $weapon['weapon_name'];

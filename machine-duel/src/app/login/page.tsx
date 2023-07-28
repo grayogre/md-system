@@ -58,7 +58,6 @@ export default function Home() {
           password: getValues('password')
         },)
           .then((res) => {
-            console.log('reg', res)
             router.push('/menu')
           })
           .catch((err) => {

@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from "react-toastify";
+import axios from '../app/axios'
 
 type sortType = {
   field:string,
   order:number
 }
-export default function WeaponList(props: {list:any[]}) {
 
-  console.log('list:', props.list)
+export default function WeaponList(props: {list:any[], setCurrentId: (value:{id:number}) => void}) {
+
   const ASC = 1
   const DESC = -1
 
   const list = props.list
+  const setCurrentId = props.setCurrentId
 
   const [sortedList, setSortedList] = useState([...list])
 
@@ -37,7 +40,6 @@ export default function WeaponList(props: {list:any[]}) {
   }
 
   const sort = () => {
-    console.log(sortOption)
     if (sortOption.field === '') {
       return
     }
@@ -72,9 +74,28 @@ export default function WeaponList(props: {list:any[]}) {
   }
 
   const showView = (id:number) => {
-    console.log('id:',id)
-    const url = '/weapon/view/' + String(id)
+    const url = `/weapon/view/${id}`
     router.push(url)
+  }
+
+  const editOrCopy = (id:number, myWeapon:boolean):void => {
+    if (myWeapon) {
+      return
+    } else {
+      const result:any = axios.post(`/api/weapon/copy/${id}`)
+        .then((res) => {
+          const newId = res.data.newId
+          toast.success('武器データをコピーしました。')
+          setCurrentId({id: newId})
+          process.nextTick(() => {
+            const row = document.getElementById(`row${newId}`)
+            row?.scrollIntoView({block:"nearest"});
+          })
+        }).catch((err) => {
+          console.log('copyErr:', err)
+          toast.error(`Error:${err.response.status}:${err.response.statusText}`)
+        })
+    }
   }
 
   return (
@@ -120,12 +141,12 @@ export default function WeaponList(props: {list:any[]}) {
       <tbody>
         {sortedList.map((weapon) => {
           return (
-            <tr key={weapon.id}>
+            <tr id={`row${weapon.id}`} key={weapon.id}>
               <td className="text-start px-2 border border-solid border-black">
                 <button className="m-1 px-1 border border-solid border-blue-500 rounded" onClick={(e:any) => showView(weapon.id)} >
                   参照
                 </button>
-                <button className="m-1 px-1 border border-solid border-blue-500 rounded">
+                <button className="m-1 px-1 border border-solid border-blue-500 rounded" onClick={(e:any) => {editOrCopy(weapon.id, weapon.myWeapon)}}>
                   {weapon.myWeapon ? '編集' : 'コピー'}
                 </button>
               </td>

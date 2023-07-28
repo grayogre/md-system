@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import axios from '../app/axios'
 import Errors from './Errors'
 
-export default function WeaponListReqirement(props: {setList: (value:any[]) => void })
+export default function WeaponListReqirement(props: {setList: (value:any[]) => void , currentId:any})
 {
   const [namePart, setNamePart] = useState('')
   const [attackType, setAttackType] = useState('-1')
@@ -18,7 +18,7 @@ export default function WeaponListReqirement(props: {setList: (value:any[]) => v
   const [errMsg, setErrMsg] = useState('')
 
   const setList = props.setList
-
+  const currentId = props.currentId
   const router = useRouter()
 
   const doQuery = () => {
@@ -36,16 +36,15 @@ export default function WeaponListReqirement(props: {setList: (value:any[]) => v
         legMountable: legMount ? '1' : '0',
       }
     }).then((res) => {
-      console.log(res)
       setList(res.data)
     }).catch((err) => {
       console.log('error:', err)
       if (err.response.status === 401) {
-        router.push('/login')
+        router.replace('/login')
       } else if (err.response.status === 429) {
         setErrMsg("検索頻度が多すぎます。しばらくお待ち下さい。")
       } else {
-        setErrMsg(err.response.statusText)
+        setErrMsg(`${err.response.status}:${err.response.statusText}`)
       }
     })
   }
@@ -62,9 +61,11 @@ export default function WeaponListReqirement(props: {setList: (value:any[]) => v
     setBool(e.target.checked)
   } 
 
-  useEffect(() => {doQuery()}, 
+  useEffect(() => {
+    doQuery()
+  }, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [namePart, attackType, myWeapon, headMount, handMount, armMount, shoulderMount, torsoMount, legMount]
+    [namePart, attackType, myWeapon, headMount, handMount, armMount, shoulderMount, torsoMount, legMount, currentId]
   )
 
   return (

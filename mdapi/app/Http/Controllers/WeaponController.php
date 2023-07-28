@@ -39,4 +39,13 @@ class WeaponController extends Controller
     public function index($id) {
         return Weapon::getDetail($id);
     }
+
+    public function copy($id) {
+        $src = Weapon::where('id',$id)->firstOrFail();
+        $dst = $src->replicate();
+        $dst['user_id'] = Auth::id();
+        $dst->save();
+
+        return ['newId' => $dst['id']];
+    }
 }

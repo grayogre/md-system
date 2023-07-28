@@ -9,14 +9,14 @@ import WeaponList from '../../../components/WeaponList'
 export default function Home() {
 
   const [list, setList] = useState<any[]>([])
-  const [sortReset, setSortReset] = useState(false);
+  const [currentId, setCurrentId] = useState({id: 0});
 
   return (
     <Frame>
       <div className="block bg-white mx-auto p-5 md:w-3/4">
         <Header />
-          <Requirement setList={setList} />
-          <WeaponList list={list} />
+          <Requirement setList={setList} currentId={currentId} />
+          <WeaponList list={list} setCurrentId={setCurrentId} />
       </div>
     </Frame>
   )

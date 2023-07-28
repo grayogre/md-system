@@ -18,8 +18,12 @@ export default async function Home({params}: {params: {id : string}}) {
   if (response.status === 401) {
     redirect('/login')
   } else if (response.status !== 200) {
-    message = String(response.status) + ':' 
-            + (response.data?.message ?? response.statusText)
+    if (response.status === 404) {
+      message = "武器データが見つかりません。"
+    } else {
+      message = String(response.status) + ':' 
+              + (response.data?.message ?? response.statusText)
+    }
     return (
       <Frame>
         <div className="grid grid-cols-1 gap-3 bg-white mx-auto p-5 w-96">
