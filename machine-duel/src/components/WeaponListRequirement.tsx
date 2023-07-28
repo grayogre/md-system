@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from "react-toastify"
 import axios from '../app/axios'
 import Errors from './Errors'
 
@@ -15,14 +16,12 @@ export default function WeaponListReqirement(props: {setList: (value:any[]) => v
   const [shoulderMount, setShoulderMount] = useState(true)
   const [torsoMount, setTorsoMount] = useState(true)
   const [legMount, setLegMount] = useState(true)
-  const [errMsg, setErrMsg] = useState('')
 
   const setList = props.setList
   const currentId = props.currentId
   const router = useRouter()
 
   const doQuery = () => {
-    setErrMsg('');
     axios.get('/api/weapon/list', {
       params: {
         namePart: namePart,
@@ -42,9 +41,9 @@ export default function WeaponListReqirement(props: {setList: (value:any[]) => v
       if (err.response.status === 401) {
         router.replace('/login')
       } else if (err.response.status === 429) {
-        setErrMsg("検索頻度が多すぎます。しばらくお待ち下さい。")
+        toast.error("検索頻度が多すぎます。しばらくお待ち下さい。")
       } else {
-        setErrMsg(`${err.response.status}:${err.response.statusText}`)
+        toast.error(`${err.response.status}:${err.response.statusText}`)
       }
     })
   }
@@ -113,7 +112,6 @@ export default function WeaponListReqirement(props: {setList: (value:any[]) => v
           脚装備
         </label>
       </fieldset>
-      <Errors messages={errMsg !== '' ? [errMsg] : []} />
     </form>
   )
 }
