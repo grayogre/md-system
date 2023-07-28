@@ -1,5 +1,0 @@
-{
-  "name": "mdapi",
-  "dockerComposeFile": "../docker-compose.yml",
-  "service": "laravel.test"
-}
