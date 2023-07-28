@@ -8,3 +8,13 @@ export const getAllCookies = (): string => {
     .join(";");
   return cookie;
 };
+
+export const httpHeaderForServerComponent = () => {
+  const cookies = getAllCookies();
+  return {
+      "Content-Type": "application/json",
+      Cookie: cookies,
+      Origin: process.env.ORIGIN_HEADER,
+      Referer: process.env.ORIGIN_HEADER
+  }
+}
