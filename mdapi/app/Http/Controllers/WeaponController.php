@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Weapon;
+use App\Http\Requests\WeaponCommitRequest;
 
 class WeaponController extends Controller
 {
@@ -38,6 +39,15 @@ class WeaponController extends Controller
 
     public function index($id) {
         return Weapon::getDetail($id);
+    }
+
+    public function commit(WeaponCommitRequest $request)  {
+        $wId = $request->id;
+        $weapon = is_null($wId) ? new Weapon : Weapon::where('id', $wId)->firstOrFail();
+        $weapon->setData($request);
+        $weapon->save();
+        $newId = $weapon->id;
+        return ['newId' => $weapon['id']];
     }
 
     public function copy($id) {

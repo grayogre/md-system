@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
 const WEAPON_BASE_WEIGHT = 5;
@@ -155,6 +156,29 @@ class Weapon extends Model
         $result['description'] = $weapon['description'];
 
         return $result;
+    }
+
+    public function setData($data) {
+        $this['weapon_name'] = $data['weapon_name'];
+        $this['user_id'] = Auth::id();
+        $this['power_impact'] = $data['power_impact'];
+        $this['power_penetrate'] = $data['power_penetrate']; 
+        $this['power_heat'] = $data['power_heat'];
+        $this['ammo_type'] = $data['ammo_type'];
+        $this['ammo_count'] = $data['ammo_count'];
+        $this['hit_rate'] = $data['hit_rate'];
+        $this['attack_type'] = $data['attack_type'];
+        $this['min_range'] = $data['min_range'];
+        $this['max_range'] = $data['max_range'];
+        $this['stabilizer_weight'] =$data['stabilizer_weight'];
+        $this['parry_rate'] = $data['parry_rate'];
+        $this['can_mount_head'] = $data['can_mount_head'];
+        $this['can_mount_hand'] = $data['can_mount_hand'];
+        $this['can_mount_arm'] = $data['can_mount_arm'];
+        $this['can_mount_shoulder'] = $data['can_mount_shoulder'];
+        $this['can_mount_torso'] = $data['can_mount_torso'];
+        $this['can_mount_leg'] = $data['can_mount_leg'];
+        $this['description'] = $data['description'];
     }
 
     public static function ammoText($weapon)

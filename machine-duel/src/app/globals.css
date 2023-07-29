@@ -4,12 +4,15 @@
 
 @layer components {
   .label-primary {
-    @apply block text-xs;
+    @apply block text-xs font-bold;
   }
   .input-primary {
     @apply block border border-gray-400 mb-2;
   }
   .button-primary {
     @apply bg-blue-500 text-white px-5 py-1 rounded shadow;
+  }
+  .input-number {
+    @apply block border border-gray-400 mb-2 text-end w-24;
   }
 }

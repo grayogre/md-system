@@ -46,7 +46,7 @@ export default async function Home({params}: {params: {id : string}}) {
           <FixedField title="威力：貫通" value={weapon.power_penetrate} className="text-right" />
           <FixedField title="威力：熱" value={weapon.power_heat} className="text-right" />
           <FixedField title="種別" value={weapon.attack_text} className="text-center" />
-          <FixedField title="弾薬" value={weapon.ammo_text} className="text-center" />
+          <FixedField title="弾薬数" value={weapon.ammo_text} className="text-center" />
           <FixedField title="攻撃距離" value={String(weapon.min_range) + ' ～ ' + String(weapon.max_range)}  className="text-center" />
           <FixedField title="命中率" value={String(weapon.hit_rate) + '%'} className="text-right" />
           <FixedField title="受け率" value={String(weapon.parry_rate) + '%'} className="text-right" />

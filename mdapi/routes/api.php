@@ -25,6 +25,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
     Route::get('/weapon/list', [WeaponController::class, 'list']);
     Route::get('/weapon/index/{id}', [WeaponController::class, 'index']);
+    Route::post('/weapon/commit', [WeaponController::class, 'commit']);
     Route::post('/weapon/copy/{id}', [WeaponController::class, 'copy']);
 });
 
