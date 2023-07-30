@@ -12,10 +12,11 @@ import InputNumber from '../../../../components/InputNumber'
 import InputCheckBox from '../../../../components/InputCheckBox'
 import FixedField from '../../../../components/FixedField'
 import Errors from '../../../../components/Errors'
-import { WeaponType } from './weapon.d' 
+import { WeaponInfo , MountPosition } from './weapon.d' 
+import { Pinyon_Script } from 'next/font/google'
 
 
-const schema: Yup.ObjectSchema<WeaponType> = Yup.object().shape({
+const schema: Yup.ObjectSchema<WeaponInfo> = Yup.object().shape({
   id: Yup.number(),
   weapon_name: Yup.string().required("武器名を入力してください。"),
   power_impact: Yup.number().typeError("威力：衝撃には数値を入力してください")
@@ -74,18 +75,12 @@ const schema: Yup.ObjectSchema<WeaponType> = Yup.object().shape({
     .required("安定器重量を入力してください。") 
     .integer("安定器重量は整数値にしてください。")
     .min(0,"安定器重量は0以上にしてください。"),
-  can_mount_head: Yup.number().typeError("頭装備を入力してください。")
-    .required("頭装備を入力してください。"),
-  can_mount_hand: Yup.number().typeError("手装備を入力してください。")
-    .required("手装備を入力してください。"),
-  can_mount_arm: Yup.number().typeError("腕装備を入力してください。")
-    .required("腕装備を入力してください。"),
-  can_mount_shoulder: Yup.number().typeError("肩装備を入力してください。")
-    .required("肩装備を入力してください。"),
-  can_mount_torso: Yup.number().typeError("胴装備を入力してください。")
-    .required("胴装備を入力してください。"),
-  can_mount_leg: Yup.number().typeError("脚装備を入力してください。")
-    .required("脚装備を入力してください。"),
+  mount_positions: Yup.array()
+    .test("exists", "装備位置は１つ以上選択してください",
+      function(this:Yup.TestContext, mount_positions: any[] | undefined) {
+        return (mount_positions !== undefined && mount_positions.length > 0)
+      }
+    ),
   description: Yup.string()
     .max(200, "解説は200文字以下にしてください。")
 })
@@ -93,7 +88,7 @@ const schema: Yup.ObjectSchema<WeaponType> = Yup.object().shape({
 export default function Home({params}: {params: {id : string}}) {
   const weaponId = (params.id === null || params.id === '') ? null : parseInt(params.id)
 
-  const initObject: WeaponType = {
+  const initObject: WeaponInfo = {
     id: weaponId,
     weapon_name: '',
     power_impact: 0,
@@ -107,14 +102,9 @@ export default function Home({params}: {params: {id : string}}) {
     hit_rate: 0, 
     parry_rate: 0,
     stabilizer_weight: 0,
-    can_mount_head: 0,
-    can_mount_hand: 0,
-    can_mount_arm: 0,
-    can_mount_shoulder: 0,
-    can_mount_torso: 0,
-    can_mount_leg: 0,
+    mount_positions: [],
     description: ''
-  } as const
+  }
   
   const initServerErr = {
     weapon_name: [],
@@ -129,14 +119,48 @@ export default function Home({params}: {params: {id : string}}) {
     hit_rate: [], 
     parry_rate: [],
     stabilizer_weight: [],
-    can_mount_head: [],
-    can_mount_hand: [],
-    can_mount_arm: [],
-    can_mount_shoulder: [],
-    can_mount_torso: [],
-    can_mount_leg: [],
+    mount_positions: [],
     description: []
   } 
+
+  const [mountPositions, setMountPositions] = useState<MountPosition[]>([
+    {
+      id: 'head',
+      name: "頭装備",
+      checked: false,
+      disabled: false,    
+    },
+    {
+      id: 'hand',
+      name: '手装備',
+      checked: false,
+      disabled: false,    
+    },
+    {
+      id: 'arm',
+      name: '腕装備',
+      checked: false,
+      disabled: false,    
+    },
+    {
+      id: 'shoulder',
+      name: '肩装備',
+      checked: false,
+      disabled: false,    
+    },
+    {
+      id: 'torso',
+      name: '胴装備',
+      checked: false,
+      disabled: false,    
+    },
+    {
+      id: 'leg',
+      name: '脚装備',
+      checked: false,
+      disabled: false,    
+    },
+  ])
 
   const { 
     register,
@@ -144,7 +168,7 @@ export default function Home({params}: {params: {id : string}}) {
     getValues,
     watch, 
     formState: { errors }
-  } = useForm<WeaponType>({
+  } = useForm<WeaponInfo>({
     mode: 'onBlur',
     defaultValues: initObject,
     resolver: yupResolver(schema),
@@ -162,12 +186,7 @@ export default function Home({params}: {params: {id : string}}) {
   const hitRateRegist = register('hit_rate') 
   const parryRateRegist = register('parry_rate')
   const stabWaightRegist = register('stabilizer_weight')
-  const mountHeadRegist = register('can_mount_head')
-  const mountHandRegist = register('can_mount_hand')
-  const mountArmRegist = register('can_mount_arm')
-  const mountShoulderRegist = register('can_mount_shoulder')
-  const mountTorsoRegist = register('can_mount_torso')
-  const mountLegRegist = register('can_mount_leg')
+  const mountPosRegist = register('mount_positions')
   const descriptionRegist = register('description')
 
   const watchAmmoType = watch('ammo_type', 0)
@@ -182,7 +201,7 @@ export default function Home({params}: {params: {id : string}}) {
   }
 
   const onSubmit = () => {
-    const params:WeaponType = getValues();
+    const params:WeaponInfo = getValues();
     axios.post('/api/weapon/commit', params)
       .then ((res) => {
         router.push('/weapon/list')
@@ -278,25 +297,24 @@ export default function Home({params}: {params: {id : string}}) {
             <div className="col-span-full">
               <h6 className="label-primary">装備位置</h6>
               <div className="grid grid-cols-3 gap-3">
-                <InputCheckBox title="頭装備" registerReturn={mountHeadRegist} />
-                <InputCheckBox title="手装備" registerReturn={mountHandRegist} />
-                <InputCheckBox title="腕装備" registerReturn={mountArmRegist} />
-                <InputCheckBox title="肩装備" registerReturn={mountShoulderRegist} />
-                <InputCheckBox title="胴装備" registerReturn={mountTorsoRegist} />
-                <InputCheckBox title="脚装備" registerReturn={mountLegRegist} />
+                { mountPositions.map((pos) => {
+                  return (
+                    <div key={pos.id} className="mt-0 -mb-1">
+                      <input
+                        id={pos.id}
+                        type="checkbox"
+                        value={pos.id}
+                        defaultChecked={pos.checked}
+                        disabled={pos.disabled}
+                        {...mountPosRegist}
+                      />
+                      <label htmlFor={pos.id}>{pos.name}</label>
+                    </div>
+                  )
+                })}
               </div>
-              {errors.can_mount_head && <Errors messages={[errors.can_mount_head.message as string]}/>}
-              {errors.can_mount_hand && <Errors messages={[errors.can_mount_hand.message as string]}/>}
-              {errors.can_mount_arm && <Errors messages={[errors.can_mount_arm.message as string]}/>}
-              {errors.can_mount_shoulder && <Errors messages={[errors.can_mount_shoulder.message as string]}/>}
-              {errors.can_mount_torso && <Errors messages={[errors.can_mount_torso.message as string]}/>}
-              {errors.can_mount_leg && <Errors messages={[errors.can_mount_leg.message as string]}/>}
-              <Errors messages={serverErr.can_mount_head ?? []} />
-              <Errors messages={serverErr.can_mount_hand ?? []} />
-              <Errors messages={serverErr.can_mount_arm ?? []} />
-              <Errors messages={serverErr.can_mount_shoulder ?? []} />
-              <Errors messages={serverErr.can_mount_torso ?? []} />
-              <Errors messages={serverErr.can_mount_leg ?? []} />
+              {errors.mount_positions && <Errors messages={[errors.mount_positions.message as string]}/>}
+              <Errors messages={serverErr.mount_positions ?? []} />
             </div>
             <label className="col-span-full mt-4">
               <h6 className="label-primary">解説</h6>

@@ -169,6 +169,7 @@ return [
         'max_range' => '最長範囲',
         'stabilizer_weight' => '安定器重量', 
         'parry_rate' => '受け率',
+        'mount_positions' => '装備位置',
         'description' => '解説',
     ],
 

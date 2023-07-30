@@ -172,12 +172,12 @@ class Weapon extends Model
         $this['max_range'] = $data['max_range'];
         $this['stabilizer_weight'] =$data['stabilizer_weight'];
         $this['parry_rate'] = $data['parry_rate'];
-        $this['can_mount_head'] = $data['can_mount_head'];
-        $this['can_mount_hand'] = $data['can_mount_hand'];
-        $this['can_mount_arm'] = $data['can_mount_arm'];
-        $this['can_mount_shoulder'] = $data['can_mount_shoulder'];
-        $this['can_mount_torso'] = $data['can_mount_torso'];
-        $this['can_mount_leg'] = $data['can_mount_leg'];
+        $this['can_mount_head'] = in_array('head', $data['mount_positions']) ? 1 : 0;
+        $this['can_mount_hand'] = in_array('hand', $data['mount_positions']) ? 1 : 0;
+        $this['can_mount_arm'] = in_array('arm', $data['mount_positions']) ? 1 : 0;
+        $this['can_mount_shoulder'] = in_array('shoulder', $data['mount_positions']) ? 1 : 0;
+        $this['can_mount_torso'] = in_array('torso', $data['mount_positions']) ? 1 : 0;
+        $this['can_mount_leg'] = in_array('leg', $data['mount_positions']) ? 1 : 0;
         $this['description'] = $data['description'];
     }
 

@@ -42,12 +42,8 @@ class WeaponCommitRequest extends FormRequest
             'max_range' => ['integer', 'between:1,200','gte:min_range'],
             'stabilizer_weight' => ['integer', 'min:0'],
             'parry_rate' => ['integer', 'between:0,99'],
-            'can_mount_head' => [Rule::in($mount_type)], 
-            'can_mount_hand' => [Rule::in($mount_type)], 
-            'can_mount_arm' => [Rule::in($mount_type)],
-            'can_mount_shoulder' => [Rule::in($mount_type)],
-            'can_mount_torso' => [Rule::in($mount_type)],
-            'can_mount_leg' => [Rule::in($mount_type)],
+            'mount_positions' => ['required', 'array', 'min:1'],
+            'mount_positions.*' => ['string'],
             'description' => ['max:200'],
         ];
     }
