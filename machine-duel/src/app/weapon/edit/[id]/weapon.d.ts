@@ -1,0 +1,22 @@
+export type WeaponType = {
+  id: number | null | undefined,
+  weapon_name: string,
+  power_impact: number,
+  power_penetrate: number,
+  power_heat: number,
+  attack_type: number,
+  ammo_type: number,
+  ammo_count: number,
+  min_range: number, 
+  max_range: number, 
+  hit_rate: number, 
+  parry_rate: number,
+  stabilizer_weight: number,
+  can_mount_head: number,
+  can_mount_hand: number,
+  can_mount_arm: number,
+  can_mount_shoulder: number,
+  can_mount_torso: number,
+  can_mount_leg: number,
+  description: string | null | undefined
+}
