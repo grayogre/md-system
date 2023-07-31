@@ -80,7 +80,8 @@ export default function WeaponList(props: {list:any[], setCurrentId: (value:{id:
 
   const editOrCopy = (id:number, myWeapon:boolean):void => {
     if (myWeapon) {
-      return
+      const url = `/weapon/edit/${id}`
+      router.push(url)
     } else {
       const result:any = axios.post(`/api/weapon/copy/${id}`)
         .then((res) => {
