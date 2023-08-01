@@ -13,7 +13,7 @@ import FixedField from './FixedField'
 import Errors from './Errors'
 
 const schema: yup.ObjectSchema<WeaponInfo> = yup.object().shape({
-  id: yup.number(),
+  id: yup.number().nullable(),
   weapon_name: yup.string().required("武器名を入力してください。"),
   power_impact: yup.number().typeError("威力：衝撃には数値を入力してください")
     .required("威力：衝撃を入力してください。")
@@ -237,7 +237,7 @@ export default function WeaponEdit(props:{weapon:WeaponInfo})
     const params:WeaponInfo = getValues();
     axios.post('/api/weapon/commit', params)
       .then ((res) => {
-        toast.success('武器データを変更しました。')
+        toast.success('武器データを確定しました。')
         router.push('/weapon/list')
       })
       .catch((err) => {

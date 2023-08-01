@@ -5,6 +5,7 @@ import Requirement from '../../../components/WeaponListRequirement'
 import Frame from '../../../components/Frame'
 import Header from '../../../components/HeaderOnLogin'
 import WeaponList from '../../../components/WeaponList'
+import WeaponCreate from '../../../components/WeaponCreate'
 
 export default function Home() {
 
@@ -15,6 +16,7 @@ export default function Home() {
     <Frame>
       <div className="block bg-white mx-auto p-5 md:w-3/4">
         <Header />
+          <WeaponCreate /> 
           <Requirement setList={setList} currentId={currentId} />
           <WeaponList list={list} setCurrentId={setCurrentId} />
       </div>
