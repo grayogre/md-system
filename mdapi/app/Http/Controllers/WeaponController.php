@@ -59,6 +59,12 @@ class WeaponController extends Controller
         return ['newId' => $dst['id']];
     }
 
+    public function delete($id) {
+        Weapon::where('id', $id)->delete();
+
+        return ['deleteId' => $id];
+    }
+
     public function basewaight(Request $request) {
         $minRange = intval($request->input('min_range'));
         $maxRange = intval($request->input('max_range'));

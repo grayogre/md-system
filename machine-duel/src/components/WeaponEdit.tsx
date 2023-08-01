@@ -101,6 +101,9 @@ export default function WeaponEdit(props:{weapon:WeaponInfo})
   } 
 
   const router = useRouter()
+  const wId = ( props.weapon.id || null)
+  const [weaponId] = useState<number|null>(wId)
+
   const [baseWaight, setBaseWaight] = useState(0)
   const [failureRate, setFailureRate] = useState(0)
   const [serverErr, setServerErr] = useState(initServerErr)
@@ -248,6 +251,20 @@ export default function WeaponEdit(props:{weapon:WeaponInfo})
       })
   }
 
+  const onDelete = () => {
+    if (weaponId !== null) {
+      axios.delete(`/api/weapon/delete/${weaponId}`)
+        .then((res) => {
+          toast.success('武器データを削除しました。')
+          router.push('/weapon/list')
+        })
+        .catch((err) => {
+          console.log('axios:', err)
+          showCriticalError(err.response.status, err.response.statusText)
+        })
+    }
+  }
+
   const onCancel = () => {
     router.back()
   }
@@ -360,7 +377,7 @@ export default function WeaponEdit(props:{weapon:WeaponInfo})
       </div>
       <div>
         <button type="submit" className="button-primary mr-2">確定</button>
-        <button type="button" className="button-primary mr-2">削除</button>
+        <button type="button" className="button-primary mr-2" onClick={onDelete}>削除</button>
         <button type="button" className="button-primary" onClick={onCancel}>キャンセル</button>
       </div>
     </form>

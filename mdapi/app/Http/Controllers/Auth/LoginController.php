@@ -15,8 +15,6 @@ class LoginController extends AuthController
      */
     public function __invoke(LoginRequest $request)
     {
-        $this->alreadyLogin($request);
-
         if ($this->attemptLogin($request)) {
             $request->session()->regenerate();
             $userId = User::where('email','=', $request->email)->first()->id;
