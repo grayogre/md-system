@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpFoundation\Response;
-use \Illuminate\Validation\Rule;
+use Illuminate\Validation\Rule;
 
 class WeaponCommitRequest extends FormRequest
 {

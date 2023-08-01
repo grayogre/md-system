@@ -7,7 +7,6 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpFoundation\Response;
 use App\Rules\Validpass;
-use Illuminate\Validation\Rules\Password;
 
 class RegisterRequest extends FormRequest
 {

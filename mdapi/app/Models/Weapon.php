@@ -110,7 +110,7 @@ class Weapon extends Model
             $row['total_waight'] = $total_waight;
             $row['hit_rate'] = $weapon['hit_rate'];
             $row['parry_rate'] = $weapon['parry_rate'];
-            $row['failure_rate'] = Weapon::failure_rate($power_total, $weapon['min_range'],$weapon['max_range'], $total_waight, $weapon['hit_rate'], $weapon['parry_rate']);
+            $row['failure_rate'] = Weapon::failureRate($power_total, $weapon['min_range'],$weapon['max_range'], $total_waight, $weapon['hit_rate'], $weapon['parry_rate']);
             $row['mount_position'] = Weapon::mountPointString($weapon);
             $summary[] = $row;
         } 
@@ -145,7 +145,7 @@ class Weapon extends Model
         $totalWaight = $baseWaight + $weapon['stabilizer_weight'];
         $result['total_waight'] = $totalWaight;
         $result['parry_rate'] = $weapon['parry_rate'];
-        $result['failure_rate'] = Weapon::failure_rate($powerTotal, $weapon['min_range'],$weapon['max_range'], $totalWaight, $weapon['hit_rate'], $weapon['parry_rate']);
+        $result['failure_rate'] = Weapon::failureRate($powerTotal, $weapon['min_range'],$weapon['max_range'], $totalWaight, $weapon['hit_rate'], $weapon['parry_rate']);
         $result['can_mount_head'] = $weapon['can_mount_head'];
         $result['can_mount_hand'] = $weapon['can_mount_hand'];
         $result['can_mount_arm'] = $weapon['can_mount_arm'];
@@ -205,7 +205,7 @@ class Weapon extends Model
         return $weight;
     }
 
-    public static function failure_rate(int $power_total, int $min_range,
+    public static function failureRate(int $power_total, int $min_range,
         int $max_range, int $total_weight, int $hit_rate, int $parry_rate) 
     {
         $rate = intval(((($power_total / 8.0 + 5.0) ** 2.0) / 2.0 + (($max_range / 10.0) ** 2.0) / 2.0

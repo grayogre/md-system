@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { toast } from "react-toastify"
 import axios from '../app/axios'
 import { WeaponInfo, MountPosition } from './weapon.d'
 import InputTextFull from './InputTextFull'
@@ -100,6 +101,8 @@ export default function WeaponEdit(props:{weapon:WeaponInfo})
   } 
 
   const router = useRouter()
+  const [baseWaight, setBaseWaight] = useState(0)
+  const [failureRate, setFailureRate] = useState(0)
   const [serverErr, setServerErr] = useState(initServerErr)
   const [error, setError] = useState('')
 
@@ -169,8 +172,59 @@ export default function WeaponEdit(props:{weapon:WeaponInfo})
   const mountPosRegist = register('mount_positions')
   const descriptionRegist = register('description')
 
+  const watchPowerImpact = watch('power_impact', 0)
+  const watchPowerPenetrate = watch('power_penetrate', 0)
+  const watchPowerHeat = watch('power_heat', 0)
+  const watchMinRange = watch('min_range', 1)
+  const watchMaxRange = watch('max_range', 1)
+  const watchAttackType = watch('attack_type', 0)
   const watchAmmoType = watch('ammo_type', 0)
+  const watchAmmoCount = watch('ammo_count', 0)
+  const watchStabWeight = watch('stabilizer_weight', 0)
+  const watchHitRate= watch('hit_rate', 0)
+  const watchParryRate= watch('parry_rate', 0)
 
+  useEffect(() => {
+    console.log('get base waight')
+    axios.get('/api/weapon/basewaight', {
+      params: {
+        min_range: Number(watchMinRange),
+        max_range: Number(watchMaxRange),
+        attack_type: Number(watchAttackType),
+        ammo_type: Number(watchAmmoType),
+        ammo_count: Number(watchAmmoCount),
+        parry_rate: Number(watchParryRate)
+      }
+    }).then((res) => {
+      console.log('gbw',res)
+      setBaseWaight(res.data.value)
+    }).catch((err) => {
+      console.log(err)
+      showCriticalError(err.response.status, err.response.statusText)
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchMinRange,watchMaxRange,watchAttackType,watchAmmoType,watchAmmoCount,watchParryRate])
+
+  useEffect(() => {
+    console.log('get failure rate')
+    axios.get('/api/weapon/failurerate', {
+      params: {
+        power_total: Number(watchPowerImpact) + Number(watchPowerPenetrate) + Number(watchPowerHeat),
+        min_range: Number(watchMinRange),
+        max_range: Number(watchMaxRange),
+        total_waight: Number(baseWaight) + Number(watchStabWeight),
+        hit_rate: Number(watchHitRate),
+        parry_rate: Number(watchParryRate) 
+      }
+    }).then((res) => {
+      console.log('gfr',res)
+      setFailureRate(res.data.value)
+    }).catch((err) => {
+      console.log(err)
+      showCriticalError(err.response.status, err.response.statusText)
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[watchPowerImpact,watchPowerPenetrate,watchPowerHeat,watchMinRange,watchMaxRange,baseWaight,watchStabWeight,watchHitRate,watchParryRate])
   const showCriticalError = (status:number, message:string) => {
     setError(String(status) + ':' + message)
     setServerErr(initServerErr)
@@ -180,6 +234,7 @@ export default function WeaponEdit(props:{weapon:WeaponInfo})
     const params:WeaponInfo = getValues();
     axios.post('/api/weapon/commit', params)
       .then ((res) => {
+        toast.success('武器データを変更しました。')
         router.push('/weapon/list')
       })
       .catch((err) => {
@@ -191,6 +246,10 @@ export default function WeaponEdit(props:{weapon:WeaponInfo})
           showCriticalError(err.response.status, err.response.statusText)
         }
       })
+  }
+
+  const onCancel = () => {
+    router.back()
   }
 
   return (
@@ -253,16 +312,16 @@ export default function WeaponEdit(props:{weapon:WeaponInfo})
         </div>
         <InputNumber title="命中率(%)" registerReturn={hitRateRegist} />
         <InputNumber title="受け率(%)" registerReturn={parryRateRegist} />
-        <FixedField title="故障率(%)" value="1" className="text-right" />
+        <FixedField title="故障率(%)" value={failureRate} className="text-right" />
         <div className="col-span-full">
           {errors.hit_rate && <Errors messages={[errors.hit_rate.message as string]}/>}
           {errors.parry_rate && <Errors messages={[errors.parry_rate.message as string]}/>}
           <Errors messages={serverErr.hit_rate ?? []} />
           <Errors messages={serverErr.parry_rate ?? []} />
         </div>
-        <FixedField title="基礎重量" value="10" className="text-right" />
+        <FixedField title="基礎重量" value={baseWaight} className="text-right" />
         <InputNumber title="安定器重量" registerReturn={stabWaightRegist} />
-        <FixedField title="総重量" value="35" className="text-right" />
+        <FixedField title="総重量" value={baseWaight + Number(getValues('stabilizer_weight'))} className="text-right" />
         <div className="col-span-full">
           {errors.stabilizer_weight && <Errors messages={[errors.stabilizer_weight.message as string]}/>}
           <Errors messages={serverErr.stabilizer_weight ?? []} />
@@ -300,7 +359,9 @@ export default function WeaponEdit(props:{weapon:WeaponInfo})
         </div>
       </div>
       <div>
-        <button type="submit" className="button-primary">確定</button>
+        <button type="submit" className="button-primary mr-2">確定</button>
+        <button type="button" className="button-primary mr-2">削除</button>
+        <button type="button" className="button-primary" onClick={onCancel}>キャンセル</button>
       </div>
     </form>
   )

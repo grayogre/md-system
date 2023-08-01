@@ -41,7 +41,7 @@ class WeaponController extends Controller
         return Weapon::getDetail($id);
     }
 
-    public function commit(WeaponCommitRequest $request)  {
+    public function commit(WeaponCommitRequest $request) {
         $wId = $request->id;
         $weapon = is_null($wId) ? new Weapon : Weapon::where('id', $wId)->firstOrFail();
         $weapon->setData($request);
@@ -57,5 +57,45 @@ class WeaponController extends Controller
         $dst->save();
 
         return ['newId' => $dst['id']];
+    }
+
+    public function basewaight(Request $request) {
+        $minRange = intval($request->input('min_range'));
+        $maxRange = intval($request->input('max_range'));
+        $attackType = intval($request->input('attack_type'));
+        $ammoType = intval($request->input('ammo_type'));
+        $ammoCount = intval($request->input('ammo_count'));
+        $parryRate = intval($request->input('parry_rate'));
+
+        $value = Weapon::baseWaight(
+            $minRange,
+            $maxRange,
+            $attackType,
+            $ammoType,
+            $ammoCount,
+            $parryRate
+        );
+
+        return ['value' => $value];
+    }
+
+    public function failurerate(Request $request) {
+        $powerTotal = intval($request->input('power_total'));
+        $minRange = intval($request->input('min_range'));
+        $maxRange = intval($request->input('max_range'));
+        $totalWaight = intval($request->input('total_waight'));
+        $hitRate = intval($request->input('hit_rate'));
+        $parryRate = intval($request->input('parry_rate'));
+    
+        $value = Weapon::failureRate(
+            $powerTotal,
+            $minRange,
+            $maxRange,
+            $totalWaight,
+            $hitRate,
+            $parryRate
+        );
+
+        return ['value' => $value];
     }
 }
