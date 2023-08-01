@@ -377,7 +377,7 @@ export default function WeaponEdit(props:{weapon:WeaponInfo})
       </div>
       <div>
         <button type="submit" className="button-primary mr-2">確定</button>
-        <button type="button" className="button-primary mr-2" onClick={onDelete}>削除</button>
+        {weaponId !== null && <button type="button" className="button-primary mr-2" onClick={onDelete}>削除</button>}
         <button type="button" className="button-primary" onClick={onCancel}>キャンセル</button>
       </div>
     </form>
